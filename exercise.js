@@ -47,8 +47,6 @@ You can have two classes: Player, which encapsulates player strategy, and Eights
 A typical outline of game logic is below:
 */
 'use strict';
-
-
 class Card {
     constructor(suit, rank, value) {
         let suitValue;
@@ -107,15 +105,107 @@ class Deck {
     }
 
 }
+class Player {
+    constructor(name) {
+        this.playerName = name;
+        this.playerCards = [];
+       
+    }
+}
+class Board {
+    constructor() {
+        this.cardsInMiddle = [];
+        this.players = [];
+        //this.faceUp=[];
+        this.faceUpCards = [];
+    }
+    start(playerOneName, playerTwoName) {
+        this.players.push(new Player(playerOneName));
+        this.players.push(new Player(playerTwoName));
+        let d = new Deck();
+        d.createDeck();
+        d.shuffleDeck();
+        this.players[0].playerCards = d.cards.slice(0, 26);
+        this.players[1].playerCards = d.cards.slice(26, 52);
+        this.cardsInMiddle = d.cards.slice(30, 52);
+        //copying first element of deck to array [player1card]
+        this.faceUpCards = this.cardsInMiddle.splice(0, 1);
+        console.log("faceup ",this.faceUpCards);
+        //calling player1 to play
+        console.log("player 1 is playing ");
+        this.playerTurn(this.players[0].playerCards);
+        console.log("\n");
+        console.log("player 2 is playing ");
+        this.playerTurn(this.players[1].playerCards);
+        // console.log("\n");
+
+    }
+    playerTurn(playerArray) {
+        let rankMatched=[], suitMatched,eightMatched ,rankMatchedIndex=[];
+        // console.log("player 1 is playing ");
+        for (let i = 0; i < playerArray.length; i++) {
+            if (this.faceUpCards[0].rank == playerArray[i].rank) {
+               // console.log("rank ", playerArray[i]);
+                rankMatched.push(playerArray[i]);
+                rankMatchedIndex.push(i);
+            }
+            if (this.faceUpCards[0].suit == playerArray[i].suit) {
+               // console.log("suit ", playerArray[i]);
+                suitMatched = playerArray[i];
+            }
+            if (playerArray[i].rank == 8) {
+               // console.log("eight ", playerArray[i]);
+                eightMatched=playerArray[i];
+            }
+
+        }
+        console.log("rankMatched ",rankMatched);
+        console.log("suitMatched ",suitMatched);
+        console.log("eightMatched ",eightMatched);
+        if(rankMatched.length != 0){
+           // console.log("rankMatched inside if ",rankMatched[rankMatched.length-1]);
+            this.faceUpCards[0] = rankMatched[rankMatched.length-1];
+       // console.log("faceup ",this.faceUpCards);
+       //for(let each of rankMatchedIndex){
+        for(let each of rankMatchedIndex) {
+            for(let i = each; i<playerArray.length; i++) {
+                playerArray[i] = playerArray[i+1];
+            }
+       // }
+        }
+        playerArray.length -=rankMatchedIndex.length;
+    }
+    console.log("face up card after update ",this.faceUpCards);
+    console.log("players array afr delete  ",playerArray);
+    console.log("players array afr delete  ",playerArray.length);
+        return false;
+    }
+}
+let gameBoard = new Board();
+gameBoard.start('Winston', 'Roy');
+console.log(gameBoard.players[0]);
+console.log(gameBoard.players[0].playerCards.length);
+
+console.log("\n");
+console.log(gameBoard.players[1]);
+console.log(gameBoard.players[1].playerCards.length);
+ //
+//console.log("FACEUP ",gameBoard.faceUpCards);
+
+//console.log("MIDDLE ",gameBoard.cardsInMiddle);
 
 
-const d = new Deck();
-d.createDeck();
-console.log(d.cards);
-console.log("shuffleing");
-d.shuffleDeck();
-console.log(d.cards);
-console.log("sorting");
-d.sortDeck(d.cards);
-console.log(d.cards);
+// let awesomeCard = new Card("an awesome Suit", "Joker", 100);
+// console.log(awesomeCard);
+
+
+// const d = new Deck();
+// d.createDeck();
+// console.log(d.cards);
+// console.log("shuffleing");
+// d.shuffleDeck();
+// console.log(d.cards);
+// console.log("sorting");
+// d.sortDeck(d.cards);
+// console.log(d.cards);
 
